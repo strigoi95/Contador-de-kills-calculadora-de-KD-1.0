@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>STRIGOI BF6 — Descarga</title>
+<style>
+  :root{--bg:#0b0f0c;--fg:#dfffea;--muted:#8ee2b9;--accent:#00ff66}
+  body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto; background:var(--bg); color:var(--fg)}
+  .wrap{max-width:900px;margin:48px auto;padding:24px}
+  .card{background:#07110a;border:1px solid #123826;padding:20px;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,.6)}
+  h1{color:var(--accent);margin:0 0 8px}
+  p{color:var(--muted)}
+  .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:16px}
+  a.btn{display:inline-block;background:var(--accent);color:#001a10;padding:12px 18px;border-radius:10px;text-decoration:none;font-weight:700}
+  .small{font-size:13px;color:#9bdfbf;margin-top:8px}
+  code{background:#03120b;padding:4px 6px;border-radius:6px;color:#c8ffe0}
+  footer{margin-top:18px;color:#6fbf9a;font-size:13px}
+  .note{margin-top:12px;padding:10px;border-radius:8px;background:#071a13;border:1px solid #123826;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>STRIGOI BF6 — Descarga</h1>
+    <p>Este es el paquete oficial <strong>STRIGOI BF6</strong>. Incluye la app local (Matrix server), HUD y lanzadores para macOS/Windows.</p>
+
+    <div class="row">
+      <!-- The zip file will be provided by you when deploying; update the href to point to the release asset or file URL -->
+      <a id="download-btn" class="btn" href="STRIGOI_BF6_APP.zip" download>Descargar paquete (ZIP)</a>
+      <a class="btn" href="#instrucciones" style="background:#0a1b14">Instrucciones</a>
+    </div>
+
+    <div class="note">
+      <strong>Nota:</strong> Para que el botón de descarga funcione en tu web pública, sube <code>STRIGOI_BF6_APP.zip</code> al mismo sitio (o cambia el enlace al archivo público en GitHub Releases / S3 / Dropbox).
+    </div>
+
+    <section id="instrucciones" style="margin-top:18px">
+      <h2 style="color:var(--muted);margin-bottom:8px">Instalación rápida</h2>
+      <ol style="color:var(--muted)">
+        <li>Descarga y descomprime el ZIP.</li>
+        <li>En macOS: da permisos al lanzador: <code>chmod +x Iniciar_STRIGOI.command</code></li>
+        <li>Haz doble clic en <code>Iniciar_STRIGOI.command</code> para abrir la Terminal y lanzar la app.</li>
+        <li>Abre <code>strigoi_hud_matrix_v5.html</code> en el navegador y activa Auto‑sync.</li>
+      </ol>
+      <p class="small">Para usuarios avanzados: puedes ejecutar directamente en Terminal: <code>python3 bf6_local_server_input_mac_v5_2_1.py</code></p>
+    </section>
+
+    <section style="margin-top:12px">
+      <h2 style="color:var(--muted);margin-bottom:8px">Cómo publicar esto (sugerencias rápidas)</h2>
+      <ul style="color:var(--muted)">
+        <li><strong>GitHub Releases:</strong> sube el ZIP como release — recomendado. URL del ZIP en el botón.</li>
+        <li><strong>GitHub Pages / Netlify / Vercel:</strong> sirve la página estática. Si usas GitHub Pages, añade el ZIP al repo o enlaza al Release.</li>
+        <li><strong>Dropbox / Google Drive:</strong> comparte enlace directo (asegúrate de usar link directo al archivo).</li>
+      </ul>
+      <p class="small">Si quieres, te preparo el repositorio listo para subir a GitHub con el index.html ya configurado.</p>
+    </section>
+
+    <footer>Built in the Coliseum — STRIGOI</footer>
+  </div>
+</div>
+</body>
+</html>
