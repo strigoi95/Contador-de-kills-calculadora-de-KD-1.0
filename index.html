@@ -1,16 +1,110 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>STRIGOI BF6 — Descarga</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>STRIGOI BF6 — Launcher</title>
+<meta name="description" content="Descarga oficial del pack STRIGOI BF6 (Matrix + HUD) — 100% local."/>
+<meta name="color-scheme" content="dark"/>
+<style>
+  :root{
+    --bg:#0b0f0c; --panel:#07110a; --stroke:#123826; --fg:#dfffea; --muted:#8ee2b9; --accent:#00ff66;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    font:15px/1.45 Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+    background:radial-gradient(1200px 600px at 50% -10%, #05251444, transparent 60%), var(--bg);
+    color:var(--fg);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .card{
+    width:min(920px,92vw);
+    background:linear-gradient(180deg,#08150e 0%, #07110a 100%);
+    border:1px solid var(--stroke);
+    border-radius:16px; padding:28px 22px;
+    box-shadow:0 12px 50px rgba(0,0,0,.55), inset 0 0 0 1px #0e2018;
+  }
+  h1{margin:0 0 6px; font-size:28px; color:var(--accent); letter-spacing:.3px}
+  p{margin:6px 0; color:var(--muted)}
+  .row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+  .btn{
+    appearance:none; border:none; cursor:pointer; text-decoration:none;
+    background:var(--accent); color:#001a10; font-weight:800;
+    padding:12px 16px; border-radius:12px; display:inline-flex; align-items:center; gap:8px;
+    box-shadow:0 6px 24px rgba(0,255,102,.25);
+  }
+  .btn.sec{background:#0e1a14;color:var(--fg);border:1px solid var(--stroke); box-shadow:none}
+  .tiny{font-size:12px; color:#a6e9c7}
+  .mono{font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12px; padding:.2rem .45rem; border-radius:6px; background:#08150e; border:1px solid #0f2a1f; color:#c8ffe0}
+  .hr{height:1px;background:linear-gradient(90deg,transparent,#1a3b2b,transparent);margin:16px 0}
+  .ok{color:#4cf3a7}.err{color:#ff9090}
+  .pill{display:inline-flex;align-items:center;gap:6px;border:1px solid #1a3b2b;border-radius:999px;padding:3px 10px;background:#08140f;color:#bff8d8;font-size:12px}
+</style>
 </head>
-<body style="background:#0b0f0c;color:#dfffea;font-family:sans-serif;text-align:center;padding-top:100px">
-  <h1 style="color:#00ff66;">STRIGOI BF6 — Descarga</h1>
-  <p>Descarga el pack oficial de STRIGOI BF6:</p>
-  <a href="https://github.com/strigoi95/Contador-de-kills-calculadora-de-KD/releases/download/v5.2.1/STRIGOI_BF6_APP.zip"
-     style="display:inline-block;background:#00ff66;color:#001a10;padding:12px 18px;border-radius:10px;text-decoration:none;font-weight:bold">
-     Descargar paquete (ZIP)
-  </a>
+<body>
+  <main class="card">
+    <h1>STRIGOI BF6 — Descarga oficial</h1>
+    <p>Pack local (<strong>Matrix + HUD</strong>) — 100% offline. Compatible macOS y Windows (con Python).</p>
+
+    <div class="row" id="actions">
+      <a id="btn-download" class="btn" href="#" target="_blank" rel="noopener">⬇️ Descargar ZIP</a>
+      <a id="btn-release"  class="btn sec" href="#" target="_blank" rel="noopener">🔗 Ver Release</a>
+      <a id="btn-repo"     class="btn sec" href="#" target="_blank" rel="noopener">📁 Ver Repositorio</a>
+    </div>
+
+    <div class="hr"></div>
+
+    <p class="tiny">
+      Si el botón principal no descarga, usa <strong>“Ver Release”</strong> y baja el asset manualmente.
+      También puedes alojar el ZIP aquí mismo y apuntar el botón a <span class="mono">./STRIGOI_BF6_APP.zip</span>.
+    </p>
+
+    <p id="status" class="tiny">Comprobando enlaces…</p>
+
+    <div class="hr"></div>
+
+    <p class="tiny">
+      Consejos de instalación: en macOS, da permisos al lanzador <span class="mono">chmod +x Iniciar_STRIGOI.command</span> y luego doble clic.
+      En Windows, ejecuta <span class="mono">Start_STRIGOI_Windows.bat</span> (requiere Python 3).
+    </p>
+
+    <div class="row">
+      <span class="pill">Privado / offline</span>
+      <span class="pill">CORS listo</span>
+      <span class="pill">Hotkeys globales</span>
+      <span class="pill">HUD sincronizado</span>
+    </div>
+  </main>
+
+<script>
+/** 🔧 Configuración (ajusta si cambias repo o versión) */
+const OWNER = "strigoi95";
+const REPO  = "Contador-de-kills-calculadora-de-KD";   // repo del Release
+const TAG   = "v5.2.1";                                 // tag del Release
+const ASSET = "STRIGOI_BF6_APP.zip";                    // nombre del ZIP
+
+/** URLs */
+const urlRepo    = `https://github.com/${OWNER}/${REPO}`;
+const urlRelease = `${urlRepo}/releases/tag/${TAG}`;
+const urlAsset   = `${urlRepo}/releases/download/${TAG}/${ASSET}`;
+
+/** Enlaces en los botones */
+const $ = s => document.querySelector(s);
+$("#btn-repo").href    = urlRepo;
+$("#btn-release").href = urlRelease;
+$("#btn-download").href= urlAsset;
+
+/** Comprobación del enlace directo */
+(async () => {
+  const st = $("#status");
+  try {
+    const res = await fetch(urlAsset, { method:"HEAD", mode:"no-cors" });
+    st.innerHTML = `Enlace directo preparado. <span class="ok">OK</span>`;
+  } catch (e) {
+    st.innerHTML = `No se pudo validar el enlace directo. Usa <strong>“Ver Release”</strong> si “Descargar ZIP” diera error. <span class="err">Fallo de verificación</span>`;
+  }
+})();
+</script>
 </body>
 </html>
