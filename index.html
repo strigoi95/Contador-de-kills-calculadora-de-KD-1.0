@@ -48,9 +48,16 @@
     <p>Pack local (<strong>Matrix + HUD</strong>) — 100% offline. Compatible macOS y Windows (con Python).</p>
 
     <div class="row" id="actions">
-      <a id="btn-download" class="btn" href="#" target="_blank" rel="noopener">⬇️ Descargar ZIP</a>
-      <a id="btn-release"  class="btn sec" href="#" target="_blank" rel="noopener">🔗 Ver Release</a>
-      <a id="btn-repo"     class="btn sec" href="#" target="_blank" rel="noopener">📁 Ver Repositorio</a>
+      <a
+        id="btn-download"
+        class="btn"
+        href="./STRIGOI_BF6_APP.zip"
+        data-release="https://github.com/strigoi95/Contador-de-kills-calculadora-de-KD/releases/download/v5.2.1/STRIGOI_BF6_APP.zip"
+        target="_blank"
+        rel="noopener"
+      >⬇️ Descargar ZIP</a>
+      <a id="btn-release"  class="btn sec" href="https://github.com/strigoi95/Contador-de-kills-calculadora-de-KD/releases/tag/v5.2.1" target="_blank" rel="noopener">🔗 Ver Release</a>
+      <a id="btn-repo"     class="btn sec" href="https://github.com/strigoi95/Contador-de-kills-calculadora-de-KD" target="_blank" rel="noopener">📁 Ver Repositorio</a>
     </div>
 
     <div class="hr"></div>
@@ -93,9 +100,10 @@ const localAsset  = `./${ASSET}`;
 
 /** Enlaces en los botones */
 const $ = s => document.querySelector(s);
-$("#btn-repo").href    = urlRepo;
-$("#btn-release").href = urlRelease;
-$("#btn-download").href= urlAsset;
+const btnDownload = $("#btn-download");
+const defaultHref = btnDownload.getAttribute("href");
+const releaseHref = btnDownload.dataset.release || urlAsset;
+btnDownload.setAttribute("download", ASSET);
 
 /** Comprobación del enlace directo */
 (async () => {
@@ -116,7 +124,7 @@ $("#btn-download").href= urlAsset;
     const asset = Array.isArray(data.assets) ? data.assets.find(a => a?.name === ASSET) : null;
 
     if (asset?.browser_download_url) {
-      $("#btn-download").href = asset.browser_download_url;
+      btnDownload.href = asset.browser_download_url;
       st.innerHTML = `Enlace directo verificado en GitHub. <span class="ok">OK</span>`;
       return;
     }
@@ -132,10 +140,11 @@ $("#btn-download").href= urlAsset;
         throw new Error(`Respuesta ${localRes.status}`);
       }
 
-      $("#btn-download").href = localAsset;
+      btnDownload.href = defaultHref;
       st.innerHTML = `Usando copia local del ZIP. <span class="ok">Disponible localmente</span>`;
       return;
     } catch (localErr) {
+      btnDownload.href = releaseHref;
       st.innerHTML = `No se pudo validar el enlace directo. Usa <strong>“Ver Release”</strong> si “Descargar ZIP” diera error. <span class="err">Fallo de verificación</span>`;
       console.error("Verificación de asset fallida", { remoteErr, localErr });
     }
