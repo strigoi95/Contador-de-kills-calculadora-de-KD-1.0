@@ -48,16 +48,23 @@
     <p>Pack local (<strong>Matrix + HUD</strong>) — 100% offline. Compatible macOS y Windows (con Python).</p>
 
     <div class="row" id="actions">
-      <a id="btn-download" class="btn" href="#" target="_blank" rel="noopener">⬇️ Descargar ZIP</a>
-      <a id="btn-release"  class="btn sec" href="#" target="_blank" rel="noopener">🔗 Ver Release</a>
-      <a id="btn-repo"     class="btn sec" href="#" target="_blank" rel="noopener">📁 Ver Repositorio</a>
+      <a
+        id="btn-download"
+        class="btn"
+        href="./STRIGOI_BF6_APP.zip"
+        data-release="https://github.com/strigoi95/Contador-de-kills-calculadora-de-KD/releases/download/v5.2.1/STRIGOI_BF6_APP.zip"
+        target="_blank"
+        rel="noopener"
+      >⬇️ Descargar ZIP</a>
+      <a id="btn-release"  class="btn sec" href="https://github.com/strigoi95/Contador-de-kills-calculadora-de-KD/releases/tag/v5.2.1" target="_blank" rel="noopener">🔗 Ver Release</a>
+      <a id="btn-repo"     class="btn sec" href="https://github.com/strigoi95/Contador-de-kills-calculadora-de-KD" target="_blank" rel="noopener">📁 Ver Repositorio</a>
     </div>
 
     <div class="hr"></div>
 
     <p class="tiny">
-      Si el botón principal no descarga, usa <strong>“Ver Release”</strong> y baja el asset manualmente.
-      También puedes alojar el ZIP aquí mismo y apuntar el botón a <span class="mono">./STRIGOI_BF6_APP.zip</span>.
+      El sistema comprueba GitHub y, si hay problemas, usa automáticamente la copia local <span class="mono">./STRIGOI_BF6_APP.zip</span>.
+      Aun así, puedes abrir <strong>“Ver Release”</strong> para descargar manualmente cualquier asset.
     </p>
 
     <p id="status" class="tiny">Comprobando enlaces…</p>
@@ -85,24 +92,62 @@ const TAG   = "v5.2.1";                                 // tag del Release
 const ASSET = "STRIGOI_BF6_APP.zip";                    // nombre del ZIP
 
 /** URLs */
-const urlRepo    = `https://github.com/${OWNER}/${REPO}`;
-const urlRelease = `${urlRepo}/releases/tag/${TAG}`;
-const urlAsset   = `${urlRepo}/releases/download/${TAG}/${ASSET}`;
+const urlRepo     = `https://github.com/${OWNER}/${REPO}`;
+const urlRelease  = `${urlRepo}/releases/tag/${TAG}`;
+const urlAsset    = `${urlRepo}/releases/download/${TAG}/${ASSET}`;
+const urlApiTag   = `https://api.github.com/repos/${OWNER}/${REPO}/releases/tags/${TAG}`;
+const localAsset  = `./${ASSET}`;
 
 /** Enlaces en los botones */
 const $ = s => document.querySelector(s);
-$("#btn-repo").href    = urlRepo;
-$("#btn-release").href = urlRelease;
-$("#btn-download").href= urlAsset;
+const btnDownload = $("#btn-download");
+const defaultHref = btnDownload.getAttribute("href");
+const releaseHref = btnDownload.dataset.release || urlAsset;
+btnDownload.setAttribute("download", ASSET);
 
 /** Comprobación del enlace directo */
 (async () => {
   const st = $("#status");
   try {
-    const res = await fetch(urlAsset, { method:"HEAD", mode:"no-cors" });
-    st.innerHTML = `Enlace directo preparado. <span class="ok">OK</span>`;
-  } catch (e) {
-    st.innerHTML = `No se pudo validar el enlace directo. Usa <strong>“Ver Release”</strong> si “Descargar ZIP” diera error. <span class="err">Fallo de verificación</span>`;
+    const res = await fetch(urlApiTag, {
+      headers: {
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28"
+      }
+    });
+
+    if (!res.ok) {
+      throw new Error(`GitHub respondió ${res.status}`);
+    }
+
+    const data = await res.json();
+    const asset = Array.isArray(data.assets) ? data.assets.find(a => a?.name === ASSET) : null;
+
+    if (asset?.browser_download_url) {
+      btnDownload.href = asset.browser_download_url;
+      st.innerHTML = `Enlace directo verificado en GitHub. <span class="ok">OK</span>`;
+      return;
+    }
+
+    throw new Error("Asset no encontrado en el release");
+  } catch (remoteErr) {
+    st.innerHTML = `No se pudo validar el enlace en GitHub (${remoteErr.message}). Buscando copia local…`;
+
+    try {
+      const localRes = await fetch(localAsset, { method: "HEAD" });
+
+      if (!localRes.ok) {
+        throw new Error(`Respuesta ${localRes.status}`);
+      }
+
+      btnDownload.href = defaultHref;
+      st.innerHTML = `Usando copia local del ZIP. <span class="ok">Disponible localmente</span>`;
+      return;
+    } catch (localErr) {
+      btnDownload.href = releaseHref;
+      st.innerHTML = `No se pudo validar el enlace directo. Usa <strong>“Ver Release”</strong> si “Descargar ZIP” diera error. <span class="err">Fallo de verificación</span>`;
+      console.error("Verificación de asset fallida", { remoteErr, localErr });
+    }
   }
 })();
 </script>
